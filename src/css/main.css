@@ -1,3 +1,4 @@
 * { margin:0; padding:0; width: 100vw; height: 100vh} 
 #canvas{display: block}
-#layout{position: absolute; opacity: 0.7;}
+#layout{position: absolute; opacity: 0.3;}
+#spaceship{width: 32px; height: 32px; display: none;}
