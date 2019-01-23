@@ -1,5 +1,25 @@
 * { margin:0; padding:0;}
 #canvas{display: block; width: 1024px; height: 768px; left: 61px; top: 183px; position: absolute;}
-#terminal{display: block; width: 768px; height:480px; left:1137px; top:75px; z-index: 1; position: absolute;}
-#layout{position: absolute; opacity: 0.5; width: 100vw; height: 100vh}
+#terminal{display: block; width: 720px; height:480px; left:1137px; top:75px; z-index: 1; position: absolute;}
+#layout{position: absolute; opacity: 1; width: 100vw; height: 100vh}
 #spritesheet{width: 32px; height: 32px; display: none;}
+
+button{
+    z-index: 2;
+    position: absolute;
+}
+
+#play{
+    left: 1650px;
+    top: 210px
+}
+
+#stop{
+    left: 1750px;
+    top: 210px
+}
+
+#pause{
+    left: 1650px;
+    top: 250px;
+}
