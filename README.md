@@ -1,18 +1,16 @@
 # Some title
 
+## Author
+Edznux
+
 ## Gameplay
 
 ### Primary screen
 
-Idea 1 (lazy) : 
-The user is asked to enter the keyword that are printed on the screen. The faster you type the better.
-There is a pre-defined number of keyword determined by the firewall security.
-If you fail a keyword, the encryption will increase (so the player will see less).
-`could get all the keyword from the source file ? or maybe from some js prototype function that includes a lot of them?`
 
 Idea 2 : 
 The user is prompted with a CLI.
-The terminal only allow the "rm" command.
+The terminal allow the "rm" command.
 The command "rm" stands for "remove" and must take a parameters : a color.
 There are différents lazer (colors) in the room that block you the exists.
 
@@ -33,6 +31,20 @@ On the top right corner, it will display several information :
 - Energy (sets the speed at which elements moves on screen : impact on the timer)
 - Encryption (how much the player can see on the primary screen `put 0 and 1 green text on top of the screen !!!!!`)
 
-## Author
 
-Edznux
+## Bonus (!SPOILERS!)
+
+### References
+
+I tried to includes some references to the hacker/IT world.
+Here is the list : 
+- The commander name is Pychus (Ref to Tychus Findlay from StarCraft)
+- The good old mighty "Military Grade Security™"
+- Green text on black background, well you know.
+- The command prompt: `Hunter2@Skynet[~]>`
+  - Hunter2 : bash.org/?244321
+  - Skynet : Terminator
+- The computer info : 
+  - CubeOs: Inspired by Qubes Os Security focused OS.
+  - v1.33.7: So leet!
+  - Kernel 5.1: We are ahead of the Linux mainline, so futuristic.
