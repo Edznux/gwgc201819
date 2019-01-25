@@ -5,7 +5,7 @@ var wTerm = 720;
 var hTerm = 480;
 
 var PROMPT = "Hunter2@Skynet[~]> "
-var cmds = ["System CubeOs v1.33.7, Kernel 5.1.", PROMPT]
+var cmds = ["System CubeOs v1.33.7, Kernel 5.1."]
 var cmdScroll = 0;
 
 TERM_SCROLL_OFFSET = 20;
@@ -18,6 +18,21 @@ levelToColors = {
     4: "55FF55",
     5: "FFFF55",
 }
+
+var intro = [
+    { text: "Commander Pychus:", font:"20px Arial", color:"#FF5500"},
+    { text: ""},
+    { text: "Hello HaxOor,", font: "16px Arial"},
+    { text: "Our troops arrived inside an abandoned space station."},
+    { text: "Your mission is to escort them while they gather informations on what happened."},
+    { text: ""},
+    { text: "The space station seems to have Military Grade Security™ still engaged."},
+    { text: "You will need to disable the firewalls so our troops could get trough."},
+    { text: "We couldn't get all of our equipement on board, beware of your energy and encryption level."},
+    { text: ""},
+    { text: "Good luck,"},
+    { text: "Pychus"},
+]
 
 var BLOCK_SIZE = 64;
 var PLAYER_SIZE = 64;
@@ -47,7 +62,7 @@ var levels = [
         ],
         start: { x: h / 2, y: w / 2 },
         signals: {
-            "energy": { x: 320, y: 80, level: 0 },
+            "energy": { x: 320, y: 80, level: 3 },
             "encryption": { x: 320, y: 200, level: 4 },
             "firewall": { x: 565, y: 80, level: 5 },
         }
@@ -136,13 +151,11 @@ function drawSeparator() {
 }
 
 function drawText() {
-    ctxTerm.beginPath();
     ctxTerm.font = "30px Arial";
-    ctxTerm.strokeStyle = "#00FF00";
-    ctxTerm.strokeText("Energy", 310, 40);
-    ctxTerm.strokeText("Encryption", 290, 160);
-    ctxTerm.strokeText("Firewall", 545, 40);
-    ctxTerm.closePath();
+    ctxTerm.fillStyle = "#00FF00";
+    ctxTerm.fillText("Energy", 310, 40);
+    ctxTerm.fillText("Encryption", 290, 160);
+    ctxTerm.fillText("Firewall", 545, 40);
 }
 
 function drawSignal(x, y, n, c) {
@@ -176,7 +189,7 @@ function drawSignal(x, y, n, c) {
     }
 
     ctxTerm.font = "30px Arial";
-    ctxTerm.strokeText(n, x + 50, y + 10);
+    ctxTerm.fillText(n, x + 50, y + 10);
     ctxTerm.closePath();
 }
 
@@ -310,13 +323,14 @@ function drawClock() {
 
 // redraw this inside a new canvas so we can scroll (like a paralax) without clearing the whole screen
 function drawTerminal() {
+    ctxTerm.fillStyle = "#0E0E0E";
     ctxTerm.fillRect(0, hTerm / 2, wTerm, hTerm / 2)
     var padding = 5;
     ctxTerm.font = "15px Arial";
-    ctxTerm.strokeStyle = "#00FF00";
+    ctxTerm.fillStyle = "#00FF00";
 
     for (var i = 0; i < cmds.length; i++) {
-        ctxTerm.strokeText(cmds[i], 10, hTerm / 2 + ((i + 1) * TERM_SCROLL_OFFSET) + padding + cmdScroll);
+        ctxTerm.fillText(cmds[i], 10, hTerm / 2 + ((i + 1) * TERM_SCROLL_OFFSET) + padding + cmdScroll);
     }
 }
 
@@ -335,7 +349,7 @@ function removeColor(color) {
     }
 }
 function printHelp() {
-    cmds.push("There is multiple commands available: 'remove', 'clear', 'help'.");
+    cmds.push("There is multiple commands available: 'remove' (alias to 'rm'), 'clear', 'help'.");
     cmds.push("You can write help <command> for more information");
     if (cmds.length > 10) {
         cmds.shift()
@@ -345,30 +359,47 @@ function printHelp() {
 function executeCmd(cmd) {
     cmd = cmd.replace(PROMPT, "")
     var splitted = cmd.split(" ")
-    if (splitted[0] == "remove") {
+    if (splitted[0] == "remove" || splitted[0] == "rm") {
         if (splitted[1] == "yellow" || splitted[1] == "red" || splitted[1] == "blue" || splitted[1] == "white") {
             console.log("call to removeColor")
             removeColor(splitted[1])
             drawLevel(levels[current_level])
         } else {
             console.log("invalid color")
+            cmds.push("Missing color : rm [blue|white|red|yellow]")
         }
+        return
     }
 
     if (splitted[0] == "clear") {
         cmds = [];
+        return
     }
 
     if (splitted[0] == "help") {
         if (splitted.length == 1) {
             printHelp()
+            return
+        }
+        if (splitted[1] == "remove" || splitted[1] == "rm"){
+            cmds.push("You can remove a lazer with 'rm <color>'. Colors available are : blue, yellow, white and red.")
+            return
+        }
+        if(splitted[1] == "clear"){
+            cmds.push("The clear command will clear the terminal screen.")
+            return
+        }
+        if(splitted[1] == "help"){
+            cmds.push("Really?")
+            return
         }
     }
-    // console.log(splitted)
+    
+    // no command found
+    cmds.push("Command not found: "+cmd)
 }
 
-function drawPlayer(start) {
-    player = start
+function drawPlayer() {
     ctx.drawImage(spritesheet, 32, 192, PLAYER_SIZE, PLAYER_SIZE, player.x, player.y, PLAYER_SIZE, PLAYER_SIZE);
 }
 
@@ -445,7 +476,8 @@ function onKeydown(e) {
                 player.y -= 32
             }
             if (checkPlayerCollisionLazer()){
-                alert("you ded")
+                // alert("you ded")
+                die()
             }
             break;
         case ARROW_RIGHT:
@@ -453,7 +485,8 @@ function onKeydown(e) {
                 player.x += 32
             }
             if (checkPlayerCollisionLazer()) {
-                alert("you ded")
+                // alert("you ded")
+                die()
             }
             break;
         case ARROW_DOWN:
@@ -461,7 +494,8 @@ function onKeydown(e) {
                 player.y += 32
             }
             if (checkPlayerCollisionLazer()) {
-                alert("you ded")
+                // alert("you ded")
+                die()
             }
             break;
         case ARROW_LEFT:
@@ -469,7 +503,8 @@ function onKeydown(e) {
                 player.x -= 32
             }
             if (checkPlayerCollisionLazer()) {
-                alert("you ded")
+                // alert("you ded")
+                die()
             }
             break;
 
@@ -484,15 +519,76 @@ function onKeydown(e) {
     drawTerminal()
 }
 
-function main() {
+function die(){
+    document.getElementById("death-screen").style.display = "block";
+    document.getElementById("start").style.display = "block";
+    document.getElementById("play").style.display = "none";
+    document.getElementById("stop").style.display = "none";
+    document.getElementById("pause").style.display = "none";
+}
 
+function start(){
+    //copy it.
+    player = JSON.parse(JSON.stringify(levels[current_level].start))
+    document.getElementById("welcome").style.display = "none";
+    document.getElementById("death-screen").style.display = "none";
+    document.getElementById("start").style.display = "none";
+    document.getElementById("play").style.display = "block";
+    document.getElementById("stop").style.display = "block";
+    document.getElementById("pause").style.display = "block";
+    player.x = levels[current_level].start.x
+    player.y = levels[current_level].start.y
+}
+
+function welcome(){
+    var welcome = document.getElementById("welcome");
+    var startButt = document.getElementById("start");
+    startButt.style.display = "block"
+    var ctxWelcome = welcome.getContext("2d");
+    var commander = {x: 50, y: 50}
+    var startY = 100;
+    var offsetY = 20;
+    ctxWelcome.fillStyle = "#0E0E0E";
+    ctxWelcome.fillRect(0, 0, w, h);
+    ctxWelcome.drawImage(spritesheet, 32, 256, 256, 256, commander.x, commander.y, 256, 256)
+    for(var i=0; i<intro.length;i++){
+        if (intro[i].color){
+            ctxWelcome.fillStyle = intro[i].color;
+        }
+        if (intro[i].font){
+            ctxWelcome.font = intro[i].font;
+        }
+        ctxWelcome.fillText(intro[i].text, 320, startY); 
+        startY += offsetY
+    }
+
+    // controls
+    var controls_pos = {x:300, y:450}
+    var controls_title_offset=50
+    ctxWelcome.fillStyle = "#FFF";
+    ctxWelcome.fillText("Controls (squad direction): ", controls_pos.x - controls_title_offset, controls_pos.y);
+    ctxWelcome.fillText("Type (console commands): ", controls_pos.x - controls_title_offset + 300, controls_pos.y);
+    // arrow keys
+    ctxWelcome.drawImage(spritesheet, 160, 0, 64, 64, controls_pos.x, controls_pos.y, 64, 64)
+    ctxWelcome.drawImage(spritesheet, 224, 0, 64, 64, controls_pos.x+50, controls_pos.y +20, 64, 64)
+    ctxWelcome.drawImage(spritesheet, 160, 64, 64, 64, controls_pos.x, controls_pos.y+40, 64, 64)
+    ctxWelcome.drawImage(spritesheet, 224, 64, 64, 64, controls_pos.x-50, controls_pos.y +20, 64, 64)
+    ctxWelcome.fillText("Arrow keys", controls_pos.x-10, controls_pos.y + 110);
+    ctxWelcome.fillText("Keyboard", controls_pos.x + 300, controls_pos.y + 55);
+
+}
+
+function main() {
+    welcome()
+    printHelp()
+    cmds.push(PROMPT)
     setInterval(() => {
         //clear the first screen
         ctx.fillStyle = "#0E0E0E";
         ctx.fillRect(0, 0, w, h);
 
         //clear the second screen
-        ctxTerm.fillStyle = "#0A0A0A";
+        ctxTerm.fillStyle = "#0E0E0E";
         ctxTerm.fillRect(0, 0, w, h);
 
         drawDashboard()

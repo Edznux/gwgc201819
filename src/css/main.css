@@ -1,7 +1,6 @@
 * { margin:0; padding:0;}
-#canvas{display: block; width: 1024px; height: 768px; left: 61px; top: 183px; position: absolute;}
-#terminal{display: block; width: 720px; height:480px; left:1137px; top:75px; z-index: 1; position: absolute;}
-#layout{position: absolute; opacity: 1; width: 100vw; height: 100vh}
+#terminal{display: block; width: 720px; height:480px; left:1137px; top: 75px; z-index: 1; position: absolute;}
+#layout{position: absolute; opacity: 1; width: 100vw; height: 100vh; z-index: 99;}
 #spritesheet{width: 32px; height: 32px; display: none;}
 
 button{
@@ -22,4 +21,55 @@ button{
 #pause{
     left: 1650px;
     top: 250px;
+}
+
+#death-screen{
+    width: 100vw;
+    height: 100vh;
+    z-index: 2;
+    position: absolute;
+    display: none;
+}
+
+#start{
+    z-index: 100;
+    top:800px;
+    left:450px;
+    position: absolute;
+    display: none;
+    width: 300px;
+    height: 75px;
+    border: 4px outset #115a27;
+    background-color: #198138;
+    color: #FFF;
+    cursor:pointer;
+}
+
+#start:hover {
+    background-color: #1eb44b;
+    color:white;
+}
+
+button{
+    z-index: 99;
+}
+#welcome{
+    z-index: 2;
+}
+.screen_one{
+    display: block;
+    width: 1024px;
+    height: 768px;
+    left: 61px;
+    top: 183px;
+    position: absolute;
+}
+
+.screen_two{
+    width: 720px;
+    height:480px;
+    left:1137px;
+    top: 75px;
+    z-index: 1;
+    position: absolute;
 }

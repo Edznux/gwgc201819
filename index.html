@@ -7,11 +7,14 @@
 </head>
 <body>
     <img id="layout" src="./gwgc201819_overlay.png">
-    <canvas id="canvas" width="1024" height="768"></canvas>
-    <canvas id="terminal" width="720" height="480"></canvas>
+    <canvas id="welcome" class="screen_one" width="1024" height="768"></canvas>
+    <canvas id="canvas" class="screen_one" width="1024" height="768"></canvas>
+    <canvas id="terminal" class="screen_two" width="720" height="480"></canvas>
     <button id="play">Start music</button>
     <button id="stop">Stop music</button>
     <button id="pause">Pause game</button>
+    <img id="death-screen" src="src/assets/dead.svg">
+    <button id="start" onclick="start()">DEPLOY</button>
     <img id="spritesheet" src="./src/assets/spritesheet.png">
     <script src="src/js/TinyMusic.min.js"></script>
     <script src="src/js/music.js"></script>
