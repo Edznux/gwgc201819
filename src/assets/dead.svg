@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080">
+    <rect width="100%" height="100%" fill="black"/>
+    <text style="font-size:50px; fill:#800000; text-anchor:middle">
+        <tspan x="600px" dy="500px">Mission failed.</tspan>
+        <tspan x="600px" dy="100px">All space marines died.</tspan>
+    </text>
+</svg>
