@@ -48,7 +48,8 @@ var P_LEFT = 1;
 var P_DOWN = 2;
 var P_RIGHT = 3;
 
-var player = { x: 0, y: 0, direction: P_UP};
+//start room => 32 (the only up + left + right room)
+var player = { x: 0, y: 0, direction: P_UP, room: 32};
 
 var levels = [
     {
@@ -56,7 +57,7 @@ var levels = [
             "energy": { x: 320, y: 80, level: 3 },
             "encryption": { x: 320, y: 200, level: 4 },
             "firewall": { x: 565, y: 80, level: 5 },
-        }
+        },
     }
 ]
 var CURRENT_LEVEL = 0;
@@ -76,15 +77,23 @@ var ctx = c.getContext("2d");
 var ctxTerm = cTerm.getContext("2d");
 var spritesheet = document.getElementById("spritesheet")
 
+//tilted 90° left
+var TILE_LR = 1
+var TILE_UDLR = 2
+var TILE_U = 10
+var TILE_UD = 9
+var TILE_D = 11
+var TILE_UL = 3
+var TILE_DL = 4
 
 var map = [
-    [0, 0, 10, 9, 9, 6, 0,],
-    [0, 0, 0, 0, 0, 1, 0,],
-    [0, 0, 10, 9, 9, 3, 0,],
-    [0, 0, 0, 1, 0, 0, 0,],
-    [0, 0, 5, 2, 9, 11, 0,],
-    [10, 9, 2, 14, 0, 0, 0,],
-    [0, 0, 4, 12, 9, 11, 0,],
+    [0,  0, 0,   0, 0,  0, 0,],
+    [0,  0, 10, 13, 9, 11, 0,],
+    [0,  0, 0,   1, 0,  0, 0,],
+    [0,  0, 5,   2, 9, 11, 0,],
+    [10, 9, 2,  14, 0,  0, 0,],
+    [0,  0, 4,  12, 9, 11, 0,],
+    [0,  0, 0,   0, 0,  0, 0,],
 ];
 
 
@@ -332,7 +341,7 @@ function loadMap(){
     levels[CURRENT_LEVEL].exits = []
     levels[CURRENT_LEVEL].energy = []
 
-    for (var i; i < data.length; i += 4) {
+    for (var i; i < 768 * 4; i += 4) {
         red = data[i];
         green = data[i + 1];
         blue = data[i + 2];
@@ -527,6 +536,34 @@ function checkEnergyUp(powerups){
     return false;
 }
 
+function checkExits(exits){
+    var exit;
+    for (var i = 0; i < exits.length; i++) {
+        exit = exits[i];
+        if (exit.y == 0 && player.y == 0){
+            console.log("Exit up hit!")
+            return i;
+        }
+
+        if (exit.y + E_SIZE == h && player.x + PLAYER_SIZE == w){
+            console.log("Exit down hit!")
+            return i;
+        }
+
+        if (exit.x == 0 && player.x == 0){
+            console.log("Exit left hit!")
+            return i;
+        }
+
+        if (exit.x + E_SIZE == w && player.x + PLAYER_SIZE == w){
+            console.log("Exit right hit!")
+            return i;
+        }
+        
+    }
+    return false;
+}
+
 function checkPlayerCollisionBlock(blks){
     var b;
     var collision = {};
@@ -611,7 +648,7 @@ function onKeydown(e) {
             }
             if (checkPlayerCollisionLazer()) {
                 // alert("you ded")
-                die()
+                die();
             }
             break;
 
@@ -620,7 +657,8 @@ function onKeydown(e) {
             if (char.match(/[a-z ]/g)) {
                 cmds[cmds.length - 1] += char
             }
-            break;
+            drawTerminal()
+            return; // if not arrow key, doesn't need to check for collisions, so exits
     }
     // checks for power ups (energy)
     var res = checkEnergyUp(levels[CURRENT_LEVEL].energy);
@@ -628,7 +666,7 @@ function onKeydown(e) {
         levels[CURRENT_LEVEL].signals.energy.level++;
         levels[CURRENT_LEVEL].energy[res]={}
     }
-    drawTerminal()
+    checkExits(levels[CURRENT_LEVEL].exits);
 }
 
 function die(){
