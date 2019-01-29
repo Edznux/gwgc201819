@@ -121,7 +121,7 @@ function musicInit(){
     sequence3.mid.frequency.value = 500;
     sequence3.treble.gain.value = -2;
     sequence3.treble.frequency.value = 1400;
-    
+
     // play
     document.querySelector('#play').addEventListener('click', function () {
         when = ac.currentTime;
@@ -180,16 +180,13 @@ function dieSound(){
     var clickySound = [
         'A1-- q',
         'A3-- q',
-        'A2-- q',
-        'A2-- q',
         'A3-- q',
-        'A2-- q',
         'A3-- q',
         'A2-- q',
         'A1-- q',
         'A4-- q',
         'D4-- q',
-        'A5-- q',
+        // 'A5-- q',
     ];
 
     var tempo = 1000
