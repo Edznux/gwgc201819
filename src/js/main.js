@@ -34,33 +34,24 @@ var intro = [
     { text: "Pychus"},
 ]
 
-var BLOCK_SIZE = 64;
+var BLOCK_SIZE = 32;
 var PLAYER_SIZE = 64;
 
 var E_SIZE = 64;
 var E_TOP = { x: w / 2 - (E_SIZE / 2), y: 0, type: 0 }
-var E_LEFT = { x: 0, y: h / 2 - E_SIZE / 2, type: 1 }
-var E_RIGHT = { x: w - (E_SIZE / 2), y: h / 2, type: 2 }
+var E_RIGHT = { x: w - E_SIZE, y: h / 2 - (E_SIZE/2), type: 1 }
+var E_LEFT = { x: 0, y: h / 2 - E_SIZE / 2, type: 2 }
 var E_BOTTOM = { x: w / 2 - (E_SIZE / 2), y: h - (E_SIZE / 2), type: 3 }
 
-var player = { x: 0, y: 0 };
+var P_UP = 0;
+var P_LEFT = 1;
+var P_DOWN = 2;
+var P_RIGHT = 3;
+
+var player = { x: 0, y: 0, direction: P_UP};
 
 var levels = [
     {
-        exits: [E_TOP, E_LEFT, E_RIGHT],
-        blocks: [
-            { x: 0, y: BLOCK_SIZE * 2 }, // top left
-            { x: BLOCK_SIZE * 2, y: h - BLOCK_SIZE }, // bottom left
-            { x: w - BLOCK_SIZE * 3, y: 0 }, // top right; *3 (*2 + itself)
-            { x: w - BLOCK_SIZE, y: h - BLOCK_SIZE * 3 } // bottom right
-        ],
-        lazers: [
-            { x: w - (BLOCK_SIZE / 2) * 3, y: h, dir: "up", color: "red", len: h, active: true },
-            { x: 0, y: h - (BLOCK_SIZE / 2) * 3, dir: "right", color: "yellow", len: w, active: true },
-            { x: (BLOCK_SIZE / 2) * 3, y: 0, dir: "down", color: "white", len: h, active: true },
-            { x: w, y: (BLOCK_SIZE / 2) * 3, dir: "left", color: "blue", len: w, active: true },
-        ],
-        start: { x: h / 2, y: w / 2 },
         signals: {
             "energy": { x: 320, y: 80, level: 3 },
             "encryption": { x: 320, y: 200, level: 4 },
@@ -68,7 +59,7 @@ var levels = [
         }
     }
 ]
-var current_level = 0;
+var CURRENT_LEVEL = 0;
 
 // KEYCODE
 var BACKSPACE = 8
@@ -203,8 +194,8 @@ function drawSignals(signals) {
 
 function drawExits(exits) {
     for (var i = 0; i < exits.length; i++) {
-        var exit = exits[i]
-        ctx.drawImage(spritesheet, 32 + (exit.type * 64), 128, 64, 64, exit.x, exit.y, 64, 64)
+        // console.log(32 + (exits[i].type * E_SIZE))
+        ctx.drawImage(spritesheet, 32 + (exits[i].type * E_SIZE), 128, 64, 64, exits[i].x, exits[i].y, 64, 64)
     }
 }
 
@@ -308,17 +299,107 @@ function drawLevel(level) {
     drawExits(level.exits)
     drawSignals(level.signals)
     drawPlayer(level.start)
+    drawEnergy(level.energy)
 }
 
 function drawBlock(blocks) {
+    var blockType = 0;
+    var block;
     for (var i = 0; i < blocks.length; i++) {
-        var block = blocks[i]
-        ctx.drawImage(spritesheet, 32, 0, 128, 128, block.x, block.y, 64, 64)
+        block = blocks[i]
+        blockType = i%4
+        ctx.drawImage(spritesheet, 32 + (blockType * 32), 0 , BLOCK_SIZE, BLOCK_SIZE, block.x, block.y, BLOCK_SIZE, BLOCK_SIZE)
     }
 }
 
-function drawClock() {
+function loadMap(){
+    var levelsImg = document.getElementById("levels")
+    var canvasLevel = document.getElementById("levelscanvas")
+    var levelctx = c.getContext("2d");
+    levelctx.drawImage(levelsImg,0,0)
+    var imgData = levelctx.getImageData(0, 0, canvasLevel.width, canvasLevel.height);
 
+    var data = imgData.data;
+    var red, green, blue = 0;
+    var skip = CURRENT_LEVEL * 768 * 4; //one level is 768 pixel (32*24), 4 is RGBA bytes
+    var i = skip;
+    var posX=0, posY=0;
+    var typeExits;
+
+    // init the level
+    levels[CURRENT_LEVEL].blocks = []
+    levels[CURRENT_LEVEL].lazers = []
+    levels[CURRENT_LEVEL].exits = []
+    levels[CURRENT_LEVEL].energy = []
+
+    for (var i; i < data.length; i += 4) {
+        red = data[i];
+        green = data[i + 1];
+        blue = data[i + 2];
+        hexRGB = rgbToHex(red, green, blue)
+        // draw blocks !
+        switch (hexRGB){
+            case "#00ff00":
+                player.x = posX*32
+                player.y = posY*32
+            break;
+            case "#808080":
+                levels[CURRENT_LEVEL].blocks.push({ x: posX*32,y:posY*32})
+            break;
+            case "#ff0000": // red lazer = up
+                levels[CURRENT_LEVEL].lazers.push({ x: posX * 32, y: posY * 32, dir: "up", color: "red", len:h, active:true })
+            break;
+            case "#ffff00": // yellow lazer = right
+                levels[CURRENT_LEVEL].lazers.push({ x: posX * 32, y: posY * 32, dir: "right", color: "yellow", len:h, active:true })
+            break;
+            case "#ffffff": // white lazer = down
+                levels[CURRENT_LEVEL].lazers.push({ x: posX * 32, y: posY * 32, dir: "down", color: "white", len:h, active:true })
+            break;
+            case "#0000ff": // blue lazer = left
+                levels[CURRENT_LEVEL].lazers.push({ x: posX * 32, y: posY * 32, dir: "left", color: "blue", len:w, active:true })
+            break;
+            case "#00ffff": // exits
+                switch (posX) {
+                    case 0:
+                        typeExits=E_LEFT
+                        break;
+                    case 31:
+                        typeExits=E_RIGHT
+                        break;
+                }
+                switch (posY) {
+                    case 0:
+                        typeExits=E_TOP
+                        break;
+                    case 24:
+                        typeExits=E_BOTTOM
+                        break;
+                }
+                levels[CURRENT_LEVEL].exits.push(typeExits)
+            break;
+            case "#ff6500":
+                levels[CURRENT_LEVEL].energy.push({x: posX*32, y: posY*32})
+                break;
+            default:
+                console.log(`Unknown pixel color ${hexRGB}`)
+            break;
+        }
+        // updates positions
+        posX++
+        if (posX == 32) {
+            posY++
+            posX = 0
+        }
+    }
+}
+
+function componentToHex(c) {
+    var hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+}
+
+function rgbToHex(r, g, b) {
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
 
 // redraw this inside a new canvas so we can scroll (like a paralax) without clearing the whole screen
@@ -335,13 +416,13 @@ function drawTerminal() {
 }
 
 function removeColor(color) {
-    console.log(levels[current_level])
-    for (var i = 0; i < levels[current_level].lazers.length; i++) {
-        if (levels[current_level].lazers[i].color == color) {
-            if (levels[current_level].signals["energy"].level > 0) {
-                levels[current_level].signals["energy"].level--
-                levels[current_level].lazers[i].active = false
-                console.log("disabled ", levels[current_level].lazers[i])
+    console.log(levels[CURRENT_LEVEL])
+    for (var i = 0; i < levels[CURRENT_LEVEL].lazers.length; i++) {
+        if (levels[CURRENT_LEVEL].lazers[i].color == color) {
+            if (levels[CURRENT_LEVEL].signals["energy"].level > 0) {
+                levels[CURRENT_LEVEL].signals["energy"].level--
+                levels[CURRENT_LEVEL].lazers[i].active = false
+                console.log("disabled ", levels[CURRENT_LEVEL].lazers[i])
             } else {
                 console.log("not enough energy")
             }
@@ -363,7 +444,7 @@ function executeCmd(cmd) {
         if (splitted[1] == "yellow" || splitted[1] == "red" || splitted[1] == "blue" || splitted[1] == "white") {
             console.log("call to removeColor")
             removeColor(splitted[1])
-            drawLevel(levels[current_level])
+            drawLevel(levels[CURRENT_LEVEL])
         } else {
             console.log("invalid color")
             cmds.push("Missing color : rm [blue|white|red|yellow]")
@@ -400,13 +481,21 @@ function executeCmd(cmd) {
 }
 
 function drawPlayer() {
-    ctx.drawImage(spritesheet, 32, 192, PLAYER_SIZE, PLAYER_SIZE, player.x, player.y, PLAYER_SIZE, PLAYER_SIZE);
+    ctx.drawImage(spritesheet, 32 + (player.direction * 64), 192, PLAYER_SIZE, PLAYER_SIZE, player.x, player.y, PLAYER_SIZE, PLAYER_SIZE);
+}
+
+function drawEnergy(energy) {
+    for (var i = 0; i < energy.length; i++) {
+        block = energy[i]
+        blockType = i % 4
+        ctx.drawImage(spritesheet, 0, 482, BLOCK_SIZE, BLOCK_SIZE, block.x, block.y, BLOCK_SIZE, BLOCK_SIZE)
+    }
 }
 
 function checkPlayerCollisionLazer(){
     var lazer;
-    for(var i = 0; i < levels[current_level].lazers.length; i++){
-        lazer = levels[current_level].lazers[i]
+    for(var i = 0; i < levels[CURRENT_LEVEL].lazers.length; i++){
+        lazer = levels[CURRENT_LEVEL].lazers[i]
         if (
             (lazer.x > player.x && lazer.x < player.x + PLAYER_SIZE && lazer.y > player.y) || // detect right collision
             (lazer.y > player.y && lazer.y < player.y + PLAYER_SIZE && lazer.x > player.x) || //left collision
@@ -427,8 +516,8 @@ function checkPlayerCollisionLazer(){
 // 4 : left
 function checkPlayerCollisionBlock(){
     var block;
-    for (var i = 0; i < levels[current_level].blocks.length; i++) {
-        block = levels[current_level].blocks[i]
+    for (var i = 0; i < levels[CURRENT_LEVEL].blocks.length; i++) {
+        block = levels[CURRENT_LEVEL].blocks[i]
         // up
         if (block.y > player.y && block.y < player.y + PLAYER_SIZE && block.x < player.y){
             console.log("up collision")
@@ -474,33 +563,37 @@ function onKeydown(e) {
         case ARROW_UP:
             if (player.y > 0 && (checkPlayerCollisionBlock() != 1)) {
                 player.y -= 32
+                player.direction = P_UP
             }
             if (checkPlayerCollisionLazer()){
                 // alert("you ded")
                 die()
             }
             break;
-        case ARROW_RIGHT:
+            case ARROW_RIGHT:
             if (player.x < w - PLAYER_SIZE) {
                 player.x += 32
+                player.direction = P_RIGHT
             }
             if (checkPlayerCollisionLazer()) {
                 // alert("you ded")
                 die()
             }
             break;
-        case ARROW_DOWN:
+            case ARROW_DOWN:
             if (player.y < h - PLAYER_SIZE) {
                 player.y += 32
+                player.direction = P_DOWN
             }
             if (checkPlayerCollisionLazer()) {
                 // alert("you ded")
                 die()
             }
             break;
-        case ARROW_LEFT:
+            case ARROW_LEFT:
             if (player.x > 0) {
                 player.x -= 32
+                player.direction = P_LEFT
             }
             if (checkPlayerCollisionLazer()) {
                 // alert("you ded")
@@ -520,6 +613,7 @@ function onKeydown(e) {
 }
 
 function die(){
+    dieSound()
     document.getElementById("death-screen").style.display = "block";
     document.getElementById("start").style.display = "block";
     document.getElementById("play").style.display = "none";
@@ -529,15 +623,13 @@ function die(){
 
 function start(){
     //copy it.
-    player = JSON.parse(JSON.stringify(levels[current_level].start))
+    loadMap()
     document.getElementById("welcome").style.display = "none";
     document.getElementById("death-screen").style.display = "none";
     document.getElementById("start").style.display = "none";
     document.getElementById("play").style.display = "block";
     document.getElementById("stop").style.display = "block";
     document.getElementById("pause").style.display = "block";
-    player.x = levels[current_level].start.x
-    player.y = levels[current_level].start.y
 }
 
 function welcome(){
@@ -580,6 +672,8 @@ function welcome(){
 
 function main() {
     welcome()
+    // loadMap()
+    musicInit()
     printHelp()
     cmds.push(PROMPT)
     setInterval(() => {
@@ -593,12 +687,11 @@ function main() {
 
         drawDashboard()
         drawTerminal()
-        drawLevel(levels[current_level])
+        drawLevel(levels[CURRENT_LEVEL])
     }, 16);
 }
 
 window.onload = function () {
     main()
-    music()
     window.addEventListener('keydown', onKeydown, false);
 }
