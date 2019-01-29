@@ -344,7 +344,8 @@ function loadMap(){
                 player.y = posY*32
             break;
             case "#808080":
-                levels[CURRENT_LEVEL].blocks.push({ x: posX*32,y:posY*32})
+                // console.debug({ x: posX * 32, y: posY * 32 })
+                levels[CURRENT_LEVEL].blocks.push({ x: posX*32, y : posY*32})
             break;
             case "#ff0000": // red lazer = up
                 levels[CURRENT_LEVEL].lazers.push({ x: posX * 32, y: posY * 32, dir: "up", color: "red", len:h, active:true })
@@ -496,50 +497,63 @@ function checkPlayerCollisionLazer(){
     var lazer;
     for(var i = 0; i < levels[CURRENT_LEVEL].lazers.length; i++){
         lazer = levels[CURRENT_LEVEL].lazers[i]
-        if (
-            (lazer.x > player.x && lazer.x < player.x + PLAYER_SIZE && lazer.y > player.y) || // detect right collision
-            (lazer.y > player.y && lazer.y < player.y + PLAYER_SIZE && lazer.x > player.x) || //left collision
-            (lazer.x > player.x && lazer.x < player.x + PLAYER_SIZE && lazer.y < player.y) || // down
-            (lazer.y > player.y && lazer.y < player.y + PLAYER_SIZE && lazer.x < player.y) // up
-        ){
-            console.log("lazer collision detected")
-            return true
+        if (lazer.active){
+            if (
+                (lazer.x > player.x && lazer.x < player.x + PLAYER_SIZE && lazer.y > player.y) || // detect right collision
+                (lazer.y > player.y && lazer.y < player.y + PLAYER_SIZE && lazer.x > player.x) || //left collision
+                (lazer.x > player.x && lazer.x < player.x + PLAYER_SIZE && lazer.y < player.y) || // down
+                (lazer.y > player.y && lazer.y < player.y + PLAYER_SIZE && lazer.x < player.y) // up
+                ){
+                    return true
+            }
         }
     }
     return false
 }
+function checkEnergyUp(powerups){
+    var p;
+    for (var i = 0; i < powerups.length; i++) {
+        p = powerups[i];
+        if (
+            (p.x > player.x && p.x < player.x + PLAYER_SIZE && p.y > player.y) || // detect right collision
+            (p.y > player.y && p.y < player.y + PLAYER_SIZE && p.x > player.x) || //left collision
+            (p.x > player.x && p.x < player.x + PLAYER_SIZE && p.y < player.y) || // down
+            (p.y > player.y && p.y < player.y + PLAYER_SIZE && p.x < player.y) // up
+        ) {
+            console.log("GOT NEW ENERGY")
+            return i;
+        }
+    }
+    return false;
+}
 
-// return face of collision : 
-// 1 : up
-// 2 : right
-// 3 : bottom
-// 4 : left
-function checkPlayerCollisionBlock(){
-    var block;
-    for (var i = 0; i < levels[CURRENT_LEVEL].blocks.length; i++) {
-        block = levels[CURRENT_LEVEL].blocks[i]
-        // up
-        if (block.y > player.y && block.y < player.y + PLAYER_SIZE && block.x < player.y){
-            console.log("up collision")
-            return 1
+function checkPlayerCollisionBlock(blks){
+    var b;
+    var collision = {};
+    for (var i = 0; i < blks.length; i++) {
+        b = blks[i];
+        //up
+        if (player.x + BLOCK_SIZE >= b.x  && player.x < b.x + BLOCK_SIZE &&
+            player.y <= b.y + BLOCK_SIZE && player.y > b.y){
+            collision.up = true;
+        }
+        //down
+        if (player.x + BLOCK_SIZE >= b.x && player.x < b.x + BLOCK_SIZE &&
+            player.y + PLAYER_SIZE >= b.y && player.y <= b.y + BLOCK_SIZE) {
+            collision.down = true;
         }
         // right
-        if (block.x > player.x && block.x < player.x + PLAYER_SIZE && block.y > player.y){
-            console.log("right collision")
-            return 2
-        }
-        // down
-        if (block.x > player.x && block.x < player.x + PLAYER_SIZE && block.y < player.y){
-            console.log("down collision")
-            return 3
+        if (player.x + PLAYER_SIZE >= b.x && player.x < b.x + BLOCK_SIZE &&
+            player.y + PLAYER_SIZE > b.y && player.y < b.y + BLOCK_SIZE ) {
+            collision.right = true;
         }
         // left
-        if (block.y > player.y && block.y < player.y + PLAYER_SIZE && block.x > player.x){
-            console.log("left collision")
-            return 4
-        }    
+        if (player.x >= b.x && player.x <= b.x + BLOCK_SIZE &&
+            player.y + PLAYER_SIZE > b.y && player.y < b.y + BLOCK_SIZE) {
+            collision.left = true;
+        }
     }
-    return false
+    return collision
 }
 
 
@@ -561,9 +575,9 @@ function onKeydown(e) {
             break;
 
         case ARROW_UP:
-            if (player.y > 0 && (checkPlayerCollisionBlock() != 1)) {
+            player.direction = P_UP
+            if (player.y > 0 && (!checkPlayerCollisionBlock(levels[CURRENT_LEVEL].blocks).up)) {
                 player.y -= 32
-                player.direction = P_UP
             }
             if (checkPlayerCollisionLazer()){
                 // alert("you ded")
@@ -571,9 +585,9 @@ function onKeydown(e) {
             }
             break;
             case ARROW_RIGHT:
-            if (player.x < w - PLAYER_SIZE) {
+            player.direction = P_RIGHT
+            if (player.x < w - PLAYER_SIZE && (!checkPlayerCollisionBlock(levels[CURRENT_LEVEL].blocks).right)) {
                 player.x += 32
-                player.direction = P_RIGHT
             }
             if (checkPlayerCollisionLazer()) {
                 // alert("you ded")
@@ -581,9 +595,9 @@ function onKeydown(e) {
             }
             break;
             case ARROW_DOWN:
-            if (player.y < h - PLAYER_SIZE) {
+            player.direction = P_DOWN
+            if (player.y < h - PLAYER_SIZE && (!checkPlayerCollisionBlock(levels[CURRENT_LEVEL].blocks).down)) {
                 player.y += 32
-                player.direction = P_DOWN
             }
             if (checkPlayerCollisionLazer()) {
                 // alert("you ded")
@@ -591,9 +605,9 @@ function onKeydown(e) {
             }
             break;
             case ARROW_LEFT:
-            if (player.x > 0) {
+            player.direction = P_LEFT
+            if (player.x > 0 && (!checkPlayerCollisionBlock(levels[CURRENT_LEVEL].blocks).left)) {
                 player.x -= 32
-                player.direction = P_LEFT
             }
             if (checkPlayerCollisionLazer()) {
                 // alert("you ded")
@@ -608,7 +622,12 @@ function onKeydown(e) {
             }
             break;
     }
-
+    // checks for power ups (energy)
+    var res = checkEnergyUp(levels[CURRENT_LEVEL].energy);
+    if( res !== false){
+        levels[CURRENT_LEVEL].signals.energy.level++;
+        levels[CURRENT_LEVEL].energy[res]={}
+    }
     drawTerminal()
 }
 
@@ -624,6 +643,20 @@ function die(){
 function start(){
     //copy it.
     loadMap()
+    setInterval(() => {
+        //clear the first screen
+        ctx.fillStyle = "#0E0E0E";
+        ctx.fillRect(0, 0, w, h);
+
+        //clear the second screen
+        ctxTerm.fillStyle = "#0E0E0E";
+        ctxTerm.fillRect(0, 0, w, h);
+
+        drawDashboard()
+        drawTerminal()
+        drawLevel(levels[CURRENT_LEVEL])
+    }, 16);
+
     document.getElementById("welcome").style.display = "none";
     document.getElementById("death-screen").style.display = "none";
     document.getElementById("start").style.display = "none";
@@ -643,7 +676,7 @@ function welcome(){
     ctxWelcome.fillStyle = "#0E0E0E";
     ctxWelcome.fillRect(0, 0, w, h);
     ctxWelcome.drawImage(spritesheet, 32, 256, 256, 256, commander.x, commander.y, 256, 256)
-    for(var i=0; i<intro.length;i++){
+    for(var i=0; i<intro.length; i++){
         if (intro[i].color){
             ctxWelcome.fillStyle = intro[i].color;
         }
@@ -672,23 +705,16 @@ function welcome(){
 
 function main() {
     welcome()
-    // loadMap()
     musicInit()
     printHelp()
+
+
     cmds.push(PROMPT)
-    setInterval(() => {
-        //clear the first screen
-        ctx.fillStyle = "#0E0E0E";
-        ctx.fillRect(0, 0, w, h);
-
-        //clear the second screen
-        ctxTerm.fillStyle = "#0E0E0E";
-        ctxTerm.fillRect(0, 0, w, h);
-
-        drawDashboard()
-        drawTerminal()
-        drawLevel(levels[CURRENT_LEVEL])
-    }, 16);
+    //clear the second screen
+    ctxTerm.fillStyle = "#0E0E0E";
+    ctxTerm.fillRect(0, 0, w, h);
+    drawDashboard()
+    drawTerminal()
 }
 
 window.onload = function () {
