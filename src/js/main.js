@@ -583,7 +583,7 @@ function checkPlayerCollisionBlock(blks) {
         }
         //down
         if (player.x + BLOCK_SIZE >= b.x && player.x < b.x + BLOCK_SIZE &&
-            player.y + PLAYER_SIZE >= b.y && player.y <= b.y + BLOCK_SIZE) {
+            player.y + PLAYER_SIZE >= b.y && player.y < b.y + BLOCK_SIZE) {
             collision.down = true;
         }
         // right
