@@ -1,3 +1,6 @@
+This License file is for the javascript lib TinyMusic.
+The minimified version of the lib is available at the name TMmin.js
+
 The MIT License (MIT)
 
 Copyright (c) 2014 Kevin Ennis
