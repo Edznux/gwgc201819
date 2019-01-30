@@ -531,10 +531,10 @@ function checkEnergyUp(powerups) {
     for (var i = 0; i < powerups.length; i++) {
         p = powerups[i];
         if (
-            (p.x > player.x && p.x < player.x + PLAYER_SIZE && p.y > player.y) || // detect right collision
-            (p.y > player.y && p.y < player.y + PLAYER_SIZE && p.x > player.x) || //left collision
-            (p.x > player.x && p.x < player.x + PLAYER_SIZE && p.y < player.y) || // down
-            (p.y > player.y && p.y < player.y + PLAYER_SIZE && p.x < player.y) // up
+            (p.x >= player.x && p.x <= player.x + PLAYER_SIZE && p.y >= player.y && p.y <= player.y + PLAYER_SIZE) || // detect right collision
+            (p.y >= player.y && p.y <= player.y + PLAYER_SIZE && p.x >= player.x && p.x <= player.x + PLAYER_SIZE) || //left collision
+            (p.x >= player.x && p.x <= player.x + PLAYER_SIZE && p.y <= player.y && p.y >= player.y + PLAYER_SIZE) || // down
+            (p.y >= player.y && p.y <= player.y + PLAYER_SIZE && p.x <= player.x && p.x >= player.x + PLAYER_SIZE) // up
         ) {
             console.log("GOT NEW ENERGY")
             return i;
