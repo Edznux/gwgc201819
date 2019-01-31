@@ -51,16 +51,128 @@ var P_RIGHT = 3;
 //start room => 32 (the only up + left + right room)
 var player = { x: 0, y: 0, direction: P_UP, room: 32 };
 
-var levels = [
-    {
+var levels = {
+    8:{
         signals: {
             "energy": { x: 320, y: 80, level: 3 },
             "encryption": { x: 320, y: 200, level: 4 },
             "firewall": { x: 565, y: 80, level: 5 },
         },
-    }
-]
-var CURRENT_LEVEL = 0;
+    },
+    9:{
+        signals: {
+            "energy": { x: 320, y: 80, level: 3 },
+            "encryption": { x: 320, y: 200, level: 4 },
+            "firewall": { x: 565, y: 80, level: 5 },
+        },
+    },
+    10:{
+        signals: {
+            "energy": { x: 320, y: 80, level: 3 },
+            "encryption": { x: 320, y: 200, level: 4 },
+            "firewall": { x: 565, y: 80, level: 5 },
+        },
+    },
+    11:{
+        signals: {
+            "energy": { x: 320, y: 80, level: 3 },
+            "encryption": { x: 320, y: 200, level: 4 },
+            "firewall": { x: 565, y: 80, level: 5 },
+        },
+    },
+    16:{
+        signals: {
+            "energy": { x: 320, y: 80, level: 3 },
+            "encryption": { x: 320, y: 200, level: 4 },
+            "firewall": { x: 565, y: 80, level: 5 },
+        },
+    },
+    23:{
+        signals: {
+            "energy": { x: 320, y: 80, level: 3 },
+            "encryption": { x: 320, y: 200, level: 4 },
+            "firewall": { x: 565, y: 80, level: 5 },
+        },
+    },
+    24:{
+        signals: {
+            "energy": { x: 320, y: 80, level: 3 },
+            "encryption": { x: 320, y: 200, level: 4 },
+            "firewall": { x: 565, y: 80, level: 5 },
+        },
+    },
+    25:{
+        signals: {
+            "energy": { x: 320, y: 80, level: 3 },
+            "encryption": { x: 320, y: 200, level: 4 },
+            "firewall": { x: 565, y: 80, level: 5 },
+        },
+    },
+    26:{
+        signals: {
+            "energy": { x: 320, y: 80, level: 3 },
+            "encryption": { x: 320, y: 200, level: 4 },
+            "firewall": { x: 565, y: 80, level: 5 },
+        },
+    },
+    28:{
+        signals: {
+            "energy": { x: 320, y: 80, level: 3 },
+            "encryption": { x: 320, y: 200, level: 4 },
+            "firewall": { x: 565, y: 80, level: 5 },
+        },
+    },
+    29:{
+        signals: {
+            "energy": { x: 320, y: 80, level: 3 },
+            "encryption": { x: 320, y: 200, level: 4 },
+            "firewall": { x: 565, y: 80, level: 5 },
+        },
+    },
+    30:{
+        signals: {
+            "energy": { x: 320, y: 80, level: 3 },
+            "encryption": { x: 320, y: 200, level: 4 },
+            "firewall": { x: 565, y: 80, level: 5 },
+        },
+    },
+    31:{
+        signals: {
+            "energy": { x: 320, y: 80, level: 3 },
+            "encryption": { x: 320, y: 200, level: 4 },
+            "firewall": { x: 565, y: 80, level: 5 },
+        },
+    },
+    36:{
+        signals: {
+            "energy": { x: 320, y: 80, level: 3 },
+            "encryption": { x: 320, y: 200, level: 4 },
+            "firewall": { x: 565, y: 80, level: 5 },
+        },
+    },
+    37:{
+        signals: {
+            "energy": { x: 320, y: 80, level: 3 },
+            "encryption": { x: 320, y: 200, level: 4 },
+            "firewall": { x: 565, y: 80, level: 5 },
+        },
+    },
+    38:{
+        signals: {
+            "energy": { x: 320, y: 80, level: 3 },
+            "encryption": { x: 320, y: 200, level: 4 },
+            "firewall": { x: 565, y: 80, level: 5 },
+        },
+    },
+    39:{
+        signals: {
+            "energy": { x: 320, y: 80, level: 3 },
+            "encryption": { x: 320, y: 200, level: 4 },
+            "firewall": { x: 565, y: 80, level: 5 },
+        },
+    },
+}
+var CURRENT_LEVEL = 31; // reference to map
 
 // KEYCODE
 var BACKSPACE = 8
@@ -94,13 +206,13 @@ var TILE_UDR = 13;
 var TILE_ULR = 14;
 
 var map = [
-    [0, 0, 0, 0, 0, 0, 0,],
-    [0, 0, TILE_D, TILE_UDR, TILE_UD, TILE_U, 0,],
-    [0, 0, 0, TILE_LR, 0, 0, 0,],
-    [0, 0, TILE_DR, TILE_UDLR, TILE_UD, TILE_U, 0,],
-    [TILE_D, TILE_UD, TILE_UDLR, TILE_ULR, 0, 0, 0,],
-    [0, 0, TILE_DL, TILE_UDL, TILE_UD, TILE_U, 0,],
-    [0, 0, 0, 0, 0, 0, 0,],
+    0, 0, 0, 0, 0, 0, 0,
+    0, 0, TILE_D, TILE_UDR, TILE_UD, TILE_U, 0,
+    0, 0, 0, TILE_LR, 0, 0, 0,
+    0, 0, TILE_DR, TILE_UDLR, TILE_UD, TILE_U, 0,
+    TILE_D, TILE_UD, TILE_UDLR, TILE_ULR, 0, 0, 0,
+    0, 0, TILE_DL, TILE_UDL, TILE_UD, TILE_U, 0,
+    0, 0, 0, 0, 0, 0, 0,
 ];
 
 
@@ -115,16 +227,17 @@ function drawMiniMap() {
     var padding = 8;
     var offsetX = padding;
     var offsetY = padding;
-    for (var x = 0; x < map.length; x++) {
-        for (var y = 0; y < map[x].length; y++) {
-            sprite = map[x][y];
-            if (sprite > 0) {
-                srcx = 0;
-                srcy = (sprite * 32) - 32;
-                posX = offsetX + (x * 32);
-                posY = offsetY + (y * 32);
-                ctxTerm.drawImage(spritesheet, srcx, srcy, 32, 32, posX, posY, 32, 32);
-            }
+    var x,y;
+    for (var i = 0; i < map.length; i++) {
+        x = Math.floor(i/7);
+        y = i%7;
+        sprite = map[i];
+        if (sprite > 0) {
+            srcx = 0;
+            srcy = (sprite * 32) - 32;
+            posX = offsetX + (x * 32);
+            posY = offsetY + (y * 32);
+            ctxTerm.drawImage(spritesheet, srcx, srcy, 32, 32, posX, posY, 32, 32);
         }
     }
 }
@@ -217,77 +330,87 @@ function drawExits(exits) {
 
 //don't you dare calling this ugly.
 function drawLazer(lazers, blocks) {
-    var endX, endY, lazer, block;
+    var endX = 0;
+    var endY = 0;
+    var lazer, block;
     for (var i = 0; i < lazers.length; i++) {
         lazer = lazers[i]
         ctx.beginPath();
+        ctx.lineWidth = 3;
         ctx.strokeStyle = lazer.color
-        ctx.moveTo(lazer.x, lazer.y)
         if (!lazer.active) {
             continue
         }
         switch (lazer.dir) {
-            case "up":
-                endX = lazer.x
+            case "up": // red
+                ctx.moveTo(lazer.x + (BLOCK_SIZE / 2), lazer.y + BLOCK_SIZE)
+                endX = lazer.x + (BLOCK_SIZE / 2)
                 endY = 0
                 for (var b = 0; b < blocks.length; b++) {
                     block = blocks[b]
-                    if (lazer.x > block.x && lazer.x < block.x + BLOCK_SIZE && lazer.y > block.y) {
-                        console.log("Block obstructing lazer")
-                        endX = lazer.x
+                    if (lazer.x >= block.x && lazer.x <= block.x + BLOCK_SIZE && lazer.y > block.y) {
+                        endX = lazer.x + (BLOCK_SIZE/2)
                         if (endY < block.y) {
                             endY = block.y + BLOCK_SIZE
                         }
-                        lazer.len = endY - lazer.y
                     }
                 }
+                lazer.len = lazer.y - endY
                 ctx.lineTo(endX, endY)
                 ctx.stroke();
                 break;
-            case "down":
-                endX = lazer.x
+            case "down": // white
+                ctx.moveTo(lazer.x + (BLOCK_SIZE / 2), lazer.y)
+                endX = lazer.x + (BLOCK_SIZE / 2)
                 endY = h
                 for (var b = 0; b < blocks.length; b++) {
                     block = blocks[b]
-                    if (lazer.x > block.x && lazer.x < block.x + BLOCK_SIZE && lazer.y < block.y) {
-                        console.log("Block obstructing lazer")
-                        endX = lazer.x
+                    if (lazer.x >= block.x && lazer.x <= block.x + BLOCK_SIZE && lazer.y < block.y) {
+                        endX = lazer.x + (BLOCK_SIZE / 2)
                         if (endY > block.y) {
                             endY = block.y
                         }
                     }
                 }
+                lazer.len = lazer.y + endY
                 ctx.lineTo(endX, endY)
                 ctx.stroke();
                 break
-            case "right":
+            case "right": // yellow
+                ctx.moveTo(lazer.x, lazer.y + (BLOCK_SIZE / 2))
                 endX = w
-                endY = lazer.y
+                endY = lazer.y + (BLOCK_SIZE / 2)
                 for (var b = 0; b < blocks.length; b++) {
                     block = blocks[b]
-                    if (lazer.y > block.y && lazer.y < block.y + BLOCK_SIZE && lazer.x < block.x) {
+                    if (lazer.y >= block.y && lazer.y <= block.y + BLOCK_SIZE && lazer.x < block.x) {
                         if (endX > block.x) {
                             endX = block.x
                         }
-                        endY = lazer.y
+                        endY = lazer.y + (BLOCK_SIZE / 2)
                     }
                 }
+
+                lazer.len = lazer.x + endX
                 ctx.lineTo(endX, endY)
                 ctx.stroke();
                 break
 
-            case "left":
+            case "left": // blue
+
+                ctx.moveTo(lazer.x + BLOCK_SIZE, lazer.y + (BLOCK_SIZE / 2))
                 endX = 0
-                endY = lazer.y
+                endY = lazer.y + (BLOCK_SIZE / 2)
                 for (var b = 0; b < blocks.length; b++) {
                     block = blocks[b]
-                    if (lazer.y > block.y && lazer.y < block.y + BLOCK_SIZE && lazer.x > block.x) {
+                    if (lazer.y >= block.y && lazer.y <= block.y + BLOCK_SIZE && lazer.x > block.x) {
                         if (endX < block.x) {
                             endX = block.x + BLOCK_SIZE
                         }
-                        endY = lazer.y
+                        endY = lazer.y + (BLOCK_SIZE / 2)
                     }
                 }
+
+                lazer.len = lazer.x - endX
                 ctx.lineTo(endX, endY)
                 ctx.stroke();
                 break
@@ -337,10 +460,12 @@ function loadMap() {
 
     var data = imgData.data;
     var red, green, blue = 0;
-    var skip = CURRENT_LEVEL * 768 * 4; //one level is 768 pixel (32*24), 4 is RGBA bytes
+    var skip = (map[CURRENT_LEVEL]-1) * 768 * 4; //one level is 768 pixel (32*24), 4 is RGBA bytes
     var i = skip;
-    var posX = 0, posY = 0;
+    var posX = 0;
+    var posY = 0;
     var typeExits;
+    console.log(skip)
 
     // init the level
     levels[CURRENT_LEVEL].blocks = []
@@ -348,7 +473,7 @@ function loadMap() {
     levels[CURRENT_LEVEL].exits = []
     levels[CURRENT_LEVEL].energy = []
 
-    for (var i; i < 768 * 4; i += 4) {
+    for (var i; i < (skip + (768 * 4)); i += 4) {
         red = data[i];
         green = data[i + 1];
         blue = data[i + 2];
@@ -515,10 +640,10 @@ function checkPlayerCollisionLazer() {
         lazer = levels[CURRENT_LEVEL].lazers[i]
         if (lazer.active) {
             if (
-                (lazer.x > player.x && lazer.x < player.x + PLAYER_SIZE && lazer.y > player.y) || // detect right collision
-                (lazer.y > player.y && lazer.y < player.y + PLAYER_SIZE && lazer.x > player.x) || //left collision
-                (lazer.x > player.x && lazer.x < player.x + PLAYER_SIZE && lazer.y < player.y) || // down
-                (lazer.y > player.y && lazer.y < player.y + PLAYER_SIZE && lazer.x < player.y) // up
+                // (lazer.x > player.x && lazer.x < player.x + PLAYER_SIZE && lazer.y > player.y) || // detect right collision
+                // (lazer.y > player.y && lazer.y < player.y + PLAYER_SIZE && lazer.x > player.x) || //left collision
+                (lazer.dir === "down" && lazer.x >= player.x && lazer.x <= player.x + PLAYER_SIZE && lazer.y < player.y && lazer.y + lazer.len > player.y) || // down
+                (lazer.dir === "up" && lazer.x >= player.x && lazer.x <= player.x + PLAYER_SIZE && lazer.y > player.y && lazer.y - lazer.len < player.y + PLAYER_SIZE) // up
             ) {
                 return true
             }
@@ -549,21 +674,29 @@ function checkExits(exits) {
         exit = exits[i];
         if (exit.y == 0 && player.y == 0) {
             console.log("Exit up hit!")
+            CURRENT_LEVEL--;
+            loadMap();
             return {up:true};
         }
-
+        
         if (exit.y + E_SIZE == h && player.x + PLAYER_SIZE == w) {
             console.log("Exit down hit!")
+            CURRENT_LEVEL++;
+            loadMap();
             return { down: true };
         }
-
+        
         if (exit.x == 0 && player.x == 0) {
             console.log("Exit left hit!")
+            CURRENT_LEVEL-=7;
+            loadMap();
             return { left: true };
         }
-
+        
         if (exit.x + E_SIZE == w && player.x + PLAYER_SIZE == w) {
             console.log("Exit right hit!")
+            CURRENT_LEVEL+=7;
+            loadMap();
             return { right: true };
         }
 
@@ -602,21 +735,21 @@ function checkPlayerCollisionBlock(blks) {
 
 
 function onKeydown(e) {
-
     switch (e.keyCode) {
-
         case BACKSPACE:
             if (cmds[cmds.length - 1].length > PROMPT.length) {
                 cmds[cmds.length - 1] = cmds[cmds.length - 1].slice(0, -1);
             }
-            break;
+            drawTerminal();
+            return; // return here
         case ENTER:
             if (cmds.length > 10) {
                 cmds.shift();
             }
             executeCmd(cmds[cmds.length - 1]);
             cmds.push(PROMPT);
-            break;
+            drawTerminal();
+            return ; // return here
 
         case ARROW_UP:
             player.direction = P_UP
