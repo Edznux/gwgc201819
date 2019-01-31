@@ -740,6 +740,7 @@ function onKeydown(e) {
             if (cmds[cmds.length - 1].length > PROMPT.length) {
                 cmds[cmds.length - 1] = cmds[cmds.length - 1].slice(0, -1);
             }
+            keyboardSound.play()
             drawTerminal();
             return; // return here
         case ENTER:
@@ -748,6 +749,7 @@ function onKeydown(e) {
             }
             executeCmd(cmds[cmds.length - 1]);
             cmds.push(PROMPT);
+            keyboardSound.play()
             drawTerminal();
             return ; // return here
 
@@ -813,6 +815,7 @@ function onKeydown(e) {
             if (char.match(/[a-z ]/g)) {
                 cmds[cmds.length - 1] += char;
             }
+            keyboardSound.play()
             drawTerminal();
             return; // if not arrow key, doesn't need to check for collisions, so exits
     }

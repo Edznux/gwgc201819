@@ -1,4 +1,5 @@
 var ac = typeof AudioContext !== 'undefined' ? new AudioContext : new webkitAudioContext;
+var keyboardSound = new Audio('./src/assets/kb.mp3')
 
 function musicInit(){
     var lead = [
@@ -158,7 +159,8 @@ function musicInit(){
 }
 
 document.querySelector('#debug').addEventListener('click', function () {
-    collideSound()
+    // collideSound()
+    keyboardSound.play()
 })
 
 function collideSound(){
