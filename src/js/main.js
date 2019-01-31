@@ -24,7 +24,8 @@ var intro = [
     { text: "" },
     { text: "Hello HaxOor,", font: "16px Arial" },
     { text: "Our troops arrived inside an abandoned space station." },
-    { text: "Your mission is to escort them while they gather informations on what happened." },
+    { text: "Your mission is to escort them while they gather information on what happened." },
+    { text: "To complete the missions, they must check all the rooms." },
     { text: "" },
     { text: "The space station seems to have Military Grade Security™ still engaged." },
     { text: "You will need to disable the firewalls so our troops could get trough." },
@@ -33,7 +34,8 @@ var intro = [
     { text: "Good luck," },
     { text: "Pychus" },
 ]
-
+var visited = new Set();
+const MAX_VISIT = 17;
 var BLOCK_SIZE = 32;
 var PLAYER_SIZE = 64;
 
@@ -51,7 +53,8 @@ var P_RIGHT = 3;
 //start room => 32 (the only up + left + right room)
 var player = { x: 0, y: 0, direction: P_UP, room: 32 };
 
-var levels = {
+var levels = {}
+var initLevel = {
     8:{
         signals: {
             "energy": { x: 320, y: 80, level: 3 },
@@ -80,7 +83,7 @@ var levels = {
             "firewall": { x: 565, y: 80, level: 5 },
         },
     },
-    16:{
+    17:{
         signals: {
             "energy": { x: 320, y: 80, level: 3 },
             "encryption": { x: 320, y: 200, level: 4 },
@@ -171,7 +174,8 @@ var levels = {
             "firewall": { x: 565, y: 80, level: 5 },
         },
     },
-}
+};
+
 var CURRENT_LEVEL = 31; // reference to map
 
 // KEYCODE
@@ -237,6 +241,18 @@ function drawMiniMap() {
             srcy = (sprite * 32) - 32;
             posX = offsetX + (x * 32);
             posY = offsetY + (y * 32);
+
+            if(CURRENT_LEVEL === i){
+                ctxTerm.beginPath();
+                ctxTerm.strokeStyle = "#FF0000";
+                ctxTerm.lineWidth = 3;
+                ctxTerm.moveTo(posX+1, posY-1);
+                ctxTerm.lineTo(posX+31, posY-1);
+                ctxTerm.lineTo(posX+31, posY+31);
+                ctxTerm.lineTo(posX+1, posY+31);
+                ctxTerm.lineTo(posX+1, posY-1);
+                ctxTerm.stroke();
+            }
             ctxTerm.drawImage(spritesheet, srcx, srcy, 32, 32, posX, posY, 32, 32);
         }
     }
@@ -244,7 +260,7 @@ function drawMiniMap() {
 
 function drawSeparator() {
     ctxTerm.beginPath();
-    var halfh = (hTerm) / 2
+    var halfh = (hTerm) / 2;
     // split in half horizontally
     ctxTerm.strokeStyle = "#FEFEFE";
     ctxTerm.lineWidth = 2;
@@ -322,6 +338,7 @@ function drawSignals(signals) {
 }
 
 function drawExits(exits) {
+    // console.log(exits)
     for (var i = 0; i < exits.length; i++) {
         // console.log(32 + (exits[i].type * E_SIZE))
         ctx.drawImage(spritesheet, 32 + (exits[i].type * E_SIZE), 128, 64, 64, exits[i].x, exits[i].y, 64, 64)
@@ -450,13 +467,21 @@ function drawBlock(blocks) {
         ctx.drawImage(spritesheet, 32 + (blockType * 32), 0, BLOCK_SIZE, BLOCK_SIZE, block.x, block.y, BLOCK_SIZE, BLOCK_SIZE)
     }
 }
-
+function win(){
+    alert("Forensic completed, all the spaceship has been visited.");
+}
 function loadMap() {
     var levelsImg = document.getElementById("levels")
     var canvasLevel = document.getElementById("levelscanvas")
     var levelctx = c.getContext("2d");
     levelctx.drawImage(levelsImg, 0, 0)
     var imgData = levelctx.getImageData(0, 0, canvasLevel.width, canvasLevel.height);
+    
+    visited.add(CURRENT_LEVEL)
+    if(visited.size == MAX_VISIT){
+        win();
+        return;
+    }
 
     var data = imgData.data;
     var red, green, blue = 0;
@@ -465,13 +490,22 @@ function loadMap() {
     var posX = 0;
     var posY = 0;
     var typeExits;
-    console.log(skip)
 
-    // init the level
+    console.log(levels[CURRENT_LEVEL])
+    if (levels[CURRENT_LEVEL]){
+        player.x = levels[CURRENT_LEVEL].player.x
+        player.y = levels[CURRENT_LEVEL].player.y
+        return;
+    }
+
+    // init the level if not existing
+    levels[CURRENT_LEVEL] = {}
+    levels[CURRENT_LEVEL].player = {}
     levels[CURRENT_LEVEL].blocks = []
     levels[CURRENT_LEVEL].lazers = []
     levels[CURRENT_LEVEL].exits = []
     levels[CURRENT_LEVEL].energy = []
+    levels[CURRENT_LEVEL].signals = JSON.parse(JSON.stringify(initLevel[CURRENT_LEVEL].signals))
 
     for (var i; i < (skip + (768 * 4)); i += 4) {
         red = data[i];
@@ -513,7 +547,7 @@ function loadMap() {
                     case 0:
                         typeExits = E_TOP
                         break;
-                    case 24:
+                    case 23:
                         typeExits = E_BOTTOM
                         break;
                 }
@@ -546,6 +580,9 @@ function rgbToHex(r, g, b) {
 
 // redraw this inside a new canvas so we can scroll (like a paralax) without clearing the whole screen
 function drawTerminal() {
+    if (cmds.length > 11) {
+        cmds.shift()
+    }
     ctxTerm.fillStyle = "#0E0E0E";
     ctxTerm.fillRect(0, hTerm / 2, wTerm, hTerm / 2)
     var padding = 5;
@@ -558,25 +595,29 @@ function drawTerminal() {
 }
 
 function removeColor(color) {
-    console.log(levels[CURRENT_LEVEL])
+    var toRemove = 0;
     for (var i = 0; i < levels[CURRENT_LEVEL].lazers.length; i++) {
-        if (levels[CURRENT_LEVEL].lazers[i].color == color) {
-            if (levels[CURRENT_LEVEL].signals["energy"].level > 0) {
-                levels[CURRENT_LEVEL].signals["energy"].level--
+        if (levels[CURRENT_LEVEL].lazers[i].color == color && levels[CURRENT_LEVEL].lazers[i].active) {
+            toRemove++
+        }
+    }
+
+    if (levels[CURRENT_LEVEL].signals["energy"].level >= toRemove) {
+        levels[CURRENT_LEVEL].signals["energy"].level -= toRemove;
+        for (var i = 0; i < levels[CURRENT_LEVEL].lazers.length; i++) {
+            if (levels[CURRENT_LEVEL].lazers[i].color == color) {
                 levels[CURRENT_LEVEL].lazers[i].active = false
-                console.log("disabled ", levels[CURRENT_LEVEL].lazers[i])
-            } else {
-                console.log("not enough energy")
             }
         }
+        console.log("disabled ", levels[CURRENT_LEVEL].lazers[i])
+    } else {
+        console.log("not enough energy")
+        cmds.push("Not enough energy.");
     }
 }
 function printHelp() {
     cmds.push("There is multiple commands available: 'remove' (alias to 'rm'), 'clear', 'help'.");
     cmds.push("You can write help <command> for more information");
-    if (cmds.length > 10) {
-        cmds.shift()
-    }
 }
 
 function executeCmd(cmd) {
@@ -640,16 +681,16 @@ function checkPlayerCollisionLazer() {
         lazer = levels[CURRENT_LEVEL].lazers[i]
         if (lazer.active) {
             if (
-                // (lazer.x > player.x && lazer.x < player.x + PLAYER_SIZE && lazer.y > player.y) || // detect right collision
-                // (lazer.y > player.y && lazer.y < player.y + PLAYER_SIZE && lazer.x > player.x) || //left collision
-                (lazer.dir === "down" && lazer.x >= player.x && lazer.x <= player.x + PLAYER_SIZE && lazer.y < player.y && lazer.y + lazer.len > player.y) || // down
-                (lazer.dir === "up" && lazer.x >= player.x && lazer.x <= player.x + PLAYER_SIZE && lazer.y > player.y && lazer.y - lazer.len < player.y + PLAYER_SIZE) // up
+                (lazer.dir === "right" && lazer.y >= player.y && lazer.y < player.y + PLAYER_SIZE && lazer.x <= player.x && lazer.x + lazer.len > player.x) || // right 
+                (lazer.dir === "left" && lazer.y >= player.y && lazer.y < player.y + PLAYER_SIZE && lazer.x >= player.x && lazer.x - lazer.len < player.x ) || // left 
+                (lazer.dir === "down" && lazer.x >= player.x && lazer.x < player.x + PLAYER_SIZE && lazer.y < player.y && lazer.y + lazer.len > player.y + PLAYER_SIZE) || // down
+                (lazer.dir === "up" && lazer.x >= player.x && lazer.x < player.x + PLAYER_SIZE && lazer.y > player.y && lazer.y - lazer.len < player.y + PLAYER_SIZE) // up
             ) {
-                return true
+                return true;
             }
         }
     }
-    return false
+    return false;
 }
 function checkEnergyUp(powerups) {
     var p;
@@ -674,13 +715,21 @@ function checkExits(exits) {
         exit = exits[i];
         if (exit.y == 0 && player.y == 0) {
             console.log("Exit up hit!")
+            
+            levels[CURRENT_LEVEL].player.x = player.x
+            levels[CURRENT_LEVEL].player.y = player.y
+            
             CURRENT_LEVEL--;
             loadMap();
             return {up:true};
         }
-        
-        if (exit.y + E_SIZE == h && player.x + PLAYER_SIZE == w) {
+        // this is so hackyis hahaha
+        if (exit.y + (E_SIZE/2) == h && player.y + PLAYER_SIZE == h) {
             console.log("Exit down hit!")
+            
+            levels[CURRENT_LEVEL].player.x = player.x
+            levels[CURRENT_LEVEL].player.y = player.y
+
             CURRENT_LEVEL++;
             loadMap();
             return { down: true };
@@ -688,6 +737,10 @@ function checkExits(exits) {
         
         if (exit.x == 0 && player.x == 0) {
             console.log("Exit left hit!")
+            
+            levels[CURRENT_LEVEL].player.x = player.x
+            levels[CURRENT_LEVEL].player.y = player.y
+
             CURRENT_LEVEL-=7;
             loadMap();
             return { left: true };
@@ -695,6 +748,10 @@ function checkExits(exits) {
         
         if (exit.x + E_SIZE == w && player.x + PLAYER_SIZE == w) {
             console.log("Exit right hit!")
+
+            levels[CURRENT_LEVEL].player.x = player.x
+            levels[CURRENT_LEVEL].player.y = player.y
+
             CURRENT_LEVEL+=7;
             loadMap();
             return { right: true };
@@ -744,9 +801,6 @@ function onKeydown(e) {
             drawTerminal();
             return; // return here
         case ENTER:
-            if (cmds.length > 10) {
-                cmds.shift();
-            }
             executeCmd(cmds[cmds.length - 1]);
             cmds.push(PROMPT);
             keyboardSound.play()
@@ -831,7 +885,7 @@ function onKeydown(e) {
 function die() {
     dieSound();
     document.getElementById("death-screen").style.display = "block";
-    document.getElementById("start").style.display = "block";
+    // document.getElementById("start").style.display = "block";
     document.getElementById("play").style.display = "none";
     document.getElementById("stop").style.display = "none";
     document.getElementById("pause").style.display = "none";
