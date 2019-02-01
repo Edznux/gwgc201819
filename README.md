@@ -34,7 +34,7 @@ On the top right corner, it will display several information :
 
 ## Bonus (!SPOILERS!)
 
-### References
+### References to the IT/Gaming/InfoSec world
 
 I tried to includes some references to the hacker/IT world.
 Here is the list : 
@@ -48,3 +48,4 @@ Here is the list :
   - CubeOs: Inspired by Qubes Os Security focused OS.
   - v1.33.7: So leet!
   - Kernel 5.1: We are ahead of the Linux mainline, so futuristic.
+- On the winning screen, you are greated with some analysis. The name cor*n*ficker is heavyly inspired by conficker worm.  It's also not a worm but an earworm (Helicoverpa zea), so a worm for corn. CORN FACTS.

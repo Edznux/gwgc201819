@@ -34,6 +34,21 @@ var intro = [
     { text: "Good luck," },
     { text: "Pychus" },
 ]
+var endText = [ 
+    { text: "Congratulation!", font: "20px Arial", color: "#FF5500" },
+    { text: "" },
+    { text: "You successfuly completed the forensic analysis of the spaceship.", font: "16px Arial" },
+    { text: "The analysis found the CornFicker earworm on the spaceship."},
+    { text: "" },
+    { text: "Please, have a cookie."},
+    { text: "" },
+    { text: "" },
+    { text: "" },
+    { text: "" },
+    { text: "" },
+    { text: "                                          Thanks for playing", font: "14px Arial"},
+]
+
 var visited = new Set();
 const MAX_VISIT = 17;
 var BLOCK_SIZE = 32;
@@ -59,126 +74,133 @@ var initLevel = {
         signals: {
             "energy": { x: 320, y: 80, level: 3 },
             "encryption": { x: 320, y: 200, level: 4 },
-            "firewall": { x: 565, y: 80, level: 5 },
+            "firewall": { x: 565, y: 80, level: 0 },
         },
     },
     9:{
         signals: {
             "energy": { x: 320, y: 80, level: 3 },
             "encryption": { x: 320, y: 200, level: 4 },
-            "firewall": { x: 565, y: 80, level: 5 },
+            "firewall": { x: 565, y: 80, level: 0 },
         },
     },
     10:{
         signals: {
             "energy": { x: 320, y: 80, level: 3 },
             "encryption": { x: 320, y: 200, level: 4 },
-            "firewall": { x: 565, y: 80, level: 5 },
+            "firewall": { x: 565, y: 80, level: 0 },
         },
     },
     11:{
         signals: {
             "energy": { x: 320, y: 80, level: 3 },
             "encryption": { x: 320, y: 200, level: 4 },
-            "firewall": { x: 565, y: 80, level: 5 },
+            "firewall": { x: 565, y: 80, level: 0 },
         },
     },
     12:{
         signals: {
-            "energy": { x: 320, y: 80, level: 3 },
+            "energy": { x: 320, y: 80, level: 2 },
             "encryption": { x: 320, y: 200, level: 4 },
-            "firewall": { x: 565, y: 80, level: 5 },
+            "firewall": { x: 565, y: 80, level: 0 },
         },
     },
     17:{
         signals: {
             "energy": { x: 320, y: 80, level: 3 },
             "encryption": { x: 320, y: 200, level: 4 },
-            "firewall": { x: 565, y: 80, level: 5 },
+            "firewall": { x: 565, y: 80, level: 0 },
         },
     },
     23:{
         signals: {
             "energy": { x: 320, y: 80, level: 3 },
             "encryption": { x: 320, y: 200, level: 4 },
-            "firewall": { x: 565, y: 80, level: 5 },
+            "firewall": { x: 565, y: 80, level: 0 },
         },
     },
     24:{
         signals: {
             "energy": { x: 320, y: 80, level: 3 },
             "encryption": { x: 320, y: 200, level: 4 },
-            "firewall": { x: 565, y: 80, level: 5 },
+            "firewall": { x: 565, y: 80, level: 0 },
         },
     },
     25:{
         signals: {
             "energy": { x: 320, y: 80, level: 3 },
             "encryption": { x: 320, y: 200, level: 4 },
-            "firewall": { x: 565, y: 80, level: 5 },
+            "firewall": { x: 565, y: 80, level: 0 },
         },
     },
     26:{
         signals: {
-            "energy": { x: 320, y: 80, level: 3 },
+            "energy": { x: 320, y: 80, level: 2 },
             "encryption": { x: 320, y: 200, level: 4 },
-            "firewall": { x: 565, y: 80, level: 5 },
+            "firewall": { x: 565, y: 80, level: 0 },
         },
     },
     28:{
         signals: {
             "energy": { x: 320, y: 80, level: 3 },
             "encryption": { x: 320, y: 200, level: 4 },
-            "firewall": { x: 565, y: 80, level: 5 },
+            "firewall": { x: 565, y: 80, level: 0 },
         },
     },
     29:{
         signals: {
             "energy": { x: 320, y: 80, level: 3 },
             "encryption": { x: 320, y: 200, level: 4 },
-            "firewall": { x: 565, y: 80, level: 5 },
+            "firewall": { x: 565, y: 80, level: 0 },
         },
     },
     30:{
         signals: {
             "energy": { x: 320, y: 80, level: 3 },
             "encryption": { x: 320, y: 200, level: 4 },
-            "firewall": { x: 565, y: 80, level: 5 },
+            "firewall": { x: 565, y: 80, level: 0 },
         },
     },
     31:{
         signals: {
             "energy": { x: 320, y: 80, level: 3 },
             "encryption": { x: 320, y: 200, level: 4 },
-            "firewall": { x: 565, y: 80, level: 5 },
+            "firewall": { x: 565, y: 80, level: 0 },
         },
     },
     36:{
         signals: {
             "energy": { x: 320, y: 80, level: 3 },
             "encryption": { x: 320, y: 200, level: 4 },
-            "firewall": { x: 565, y: 80, level: 5 },
+            "firewall": { x: 565, y: 80, level: 0 },
         },
     },
     37:{
         signals: {
             "energy": { x: 320, y: 80, level: 3 },
             "encryption": { x: 320, y: 200, level: 4 },
-            "firewall": { x: 565, y: 80, level: 5 },
+            "firewall": { x: 565, y: 80, level: 0 },
         },
     },
     38:{
         signals: {
             "energy": { x: 320, y: 80, level: 3 },
             "encryption": { x: 320, y: 200, level: 4 },
-            "firewall": { x: 565, y: 80, level: 5 },
+            "firewall": { x: 565, y: 80, level: 0 },
         },
     },
     39:{
         signals: {
             "energy": { x: 320, y: 80, level: 3 },
             "encryption": { x: 320, y: 200, level: 4 },
-            "firewall": { x: 565, y: 80, level: 5 },
+            "firewall": { x: 565, y: 80, level: 0 },
+        },
+    },
+    40:{
+        signals: {
+            "energy": { x: 320, y: 80, level: 2},
+            "encryption": { x: 320, y: 200, level: 4 },
+            "firewall": { x: 565, y: 80, level: 0 },
         },
     },
 };
@@ -396,7 +418,6 @@ function drawLazer(lazers, blocks) {
                         }
                     }
                 }
-                console.log(endY, lazer.y, endY - lazer.y )
                 lazer.len = endY - lazer.y 
                 ctx.lineTo(endX, endY)
                 ctx.stroke();
@@ -415,7 +436,7 @@ function drawLazer(lazers, blocks) {
                     }
                 }
 
-                lazer.len = lazer.x + endX
+                lazer.len = endX - lazer.x 
                 ctx.lineTo(endX, endY)
                 ctx.stroke();
                 break
@@ -476,7 +497,28 @@ function drawBlock(blocks) {
     }
 }
 function win(){
-    alert("Forensic completed, all the spaceship has been visited.");
+    // alert("Forensic completed, all the spaceship has been visited.");
+    var welcome = document.getElementById("welcome");
+    var startButt = document.getElementById("start");
+    var ctxWelcome = welcome.getContext("2d");
+    var startY = 200;
+    var offsetY = 20;
+    welcome.style.display = "block";
+    startButt.style.display = "none";
+
+    ctxWelcome.fillStyle = "#0E0E0E";
+    ctxWelcome.fillRect(0, 0, w, h);
+    console.log(endText)
+    for (var i = 0; i < endText.length; i++) {
+        if (endText[i].color) {
+            ctxWelcome.fillStyle = endText[i].color;
+        }
+        if (endText[i].font) {
+            ctxWelcome.font = endText[i].font;
+        }
+        ctxWelcome.fillText(endText[i].text, 320, startY);
+        startY += offsetY
+    }
 }
 function loadMap() {
     var levelsImg = document.getElementById("levels")
@@ -575,6 +617,7 @@ function loadMap() {
             posX = 0
         }
     }
+    levels[CURRENT_LEVEL].signals.firewall.level = levels[CURRENT_LEVEL].lazers.length;
 }
 
 function componentToHex(c) {
@@ -604,9 +647,10 @@ function drawTerminal() {
 
 function removeColor(color) {
     var toRemove = 0;
+    var activeCount=0;
     for (var i = 0; i < levels[CURRENT_LEVEL].lazers.length; i++) {
         if (levels[CURRENT_LEVEL].lazers[i].color == color && levels[CURRENT_LEVEL].lazers[i].active) {
-            toRemove++
+            toRemove++;
         }
     }
 
@@ -616,7 +660,11 @@ function removeColor(color) {
             if (levels[CURRENT_LEVEL].lazers[i].color == color) {
                 levels[CURRENT_LEVEL].lazers[i].active = false
             }
+            if (levels[CURRENT_LEVEL].lazers[i].active){
+                activeCount++;
+            }
         }
+        levels[CURRENT_LEVEL].signals.firewall.level = activeCount
         console.log("disabled ", levels[CURRENT_LEVEL].lazers[i])
     } else {
         console.log("not enough energy")
@@ -691,9 +739,10 @@ function checkPlayerCollisionLazer() {
             if (
                 (lazer.dir === "right"&& lazer.y >= player.y && lazer.y < player.y + PLAYER_SIZE && lazer.x <= player.x && lazer.x + lazer.len > player.x) || // right 
                 (lazer.dir === "left" && lazer.y >= player.y && lazer.y < player.y + PLAYER_SIZE && lazer.x >= player.x && lazer.x - lazer.len < player.x ) || // left 
-                (lazer.dir === "down" && lazer.x >= player.x && lazer.x < player.x + PLAYER_SIZE && lazer.y <= player.y  && lazer.y + lazer.len > player.y) || // down
-                (lazer.dir === "up"   && lazer.x >= player.x && lazer.x < player.x + PLAYER_SIZE && lazer.y >= player.y  && lazer.y - lazer.len < player.y + PLAYER_SIZE) // up
+                (lazer.dir === "down" && lazer.x >= player.x && lazer.x < player.x + PLAYER_SIZE && lazer.y <= player.y && lazer.y + lazer.len > player.y) || // down
+                (lazer.dir === "up"   && lazer.x >= player.x && lazer.x < player.x + PLAYER_SIZE && lazer.y >= player.y && lazer.y - lazer.len < player.y + PLAYER_SIZE) // up
             ) {
+                console.log('you died from a lazer with dir: ' + lazer.dir +" : ", lazer)
                 return true;
             }
         }
