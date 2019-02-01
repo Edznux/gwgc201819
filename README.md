@@ -32,7 +32,7 @@ On the top right corner, it will display several information :
 - The firewall level corresponds to the number of active firewall ("lazers") in the room.
 - The encryption level is a simple "hacker fog of war" that will block the vision on the players with 0 and 1. [NOT IMPLEMENTED]
 
-## Notes and bonus (!SPOILERS!)
+## Notes and bonus
 
 ### Audio/Sound/Graphics
 
@@ -53,7 +53,30 @@ If you look at the code (it's really bad, old JS, lots of global var...) you wil
 - Collision checking is bad, there is a loads of nested loop and repeated actions but it kinda works I think.
 - I didn't use any compilation / minification because it's not needed.
 
-### References to the IT/Gaming/InfoSec world
+Size :
+
+-rw-r--r-- 1 edznux edznux  1202 janv. 30 02:20 LICENSE.txt
+-rw-r--r-- 1 edznux edznux 33041 févr.  1 05:26 main.js
+-rw-rw-r-- 1 edznux edznux  1354 févr.  1 05:55 music.js
+-rw-rw-r-- 1 edznux edznux  3035 janv. 30 02:18 TMmin.js
+Total : 38632
+
+-rw-rw-r-- 1 edznux edznux   334 févr.  1 05:31 dead.svg
+-rw-rw-r-- 1 edznux edznux  2664 janv. 31 03:07 kb.mp3
+-rw-rw-r-- 1 edznux edznux  1585 févr.  1 04:59 levels.png
+-rw-rw-r-- 1 edznux edznux 36874 janv. 31 04:54 sprites.png
+Total : 41457
+
+-rw-r--r-- 1 edznux edznux 1185 janv. 27 19:19 main.css
+Total : 1185
+
+-rw-r--r-- 1 edznux edznux 950 févr.  1 05:54 index.htm
+Total : 950
+
+Sum of all used file (excluding "gwgc201819_overlay.png") : 82224
+
+
+### References to the IT/Gaming/InfoSec world (!SPOILERS!)
 
 I tried to include some references to the hacker/IT world.
 Here is the list : 
