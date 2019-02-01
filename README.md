@@ -7,6 +7,16 @@ Source Repository : https://github.com/Edznux/gwgc201819
 
 Pre-Notes: CHECK YOUR SOUND BEFORE starting the game, I always forgot how LOUD it is by default and the sound are home made so they are ...hmm... _let's not talk about that._
 
+How to run : 
+
+```
+cd maissi_turtle
+python3 -m http.server
+```
+
+The index file is named `index.htm`
+
+
 ## Gameplay
 
 The user is a hacker trying to help some space marine crew in the forensic analysis of an abandoned spaceship.
