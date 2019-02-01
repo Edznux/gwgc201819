@@ -83,6 +83,13 @@ var initLevel = {
             "firewall": { x: 565, y: 80, level: 5 },
         },
     },
+    12:{
+        signals: {
+            "energy": { x: 320, y: 80, level: 3 },
+            "encryption": { x: 320, y: 200, level: 4 },
+            "firewall": { x: 565, y: 80, level: 5 },
+        },
+    },
     17:{
         signals: {
             "energy": { x: 320, y: 80, level: 3 },
@@ -389,7 +396,8 @@ function drawLazer(lazers, blocks) {
                         }
                     }
                 }
-                lazer.len = lazer.y + endY
+                console.log(endY, lazer.y, endY - lazer.y )
+                lazer.len = endY - lazer.y 
                 ctx.lineTo(endX, endY)
                 ctx.stroke();
                 break
@@ -677,14 +685,14 @@ function drawEnergy(energy) {
 
 function checkPlayerCollisionLazer() {
     var lazer;
-    for (var i = 0; i < levels[CURRENT_LEVEL].lazers.length; i++) {
+    for (var i = 0; i < levels[CURRENT_LEVEL].lazers.length; i++) { 
         lazer = levels[CURRENT_LEVEL].lazers[i]
         if (lazer.active) {
             if (
-                (lazer.dir === "right" && lazer.y >= player.y && lazer.y < player.y + PLAYER_SIZE && lazer.x <= player.x && lazer.x + lazer.len > player.x) || // right 
+                (lazer.dir === "right"&& lazer.y >= player.y && lazer.y < player.y + PLAYER_SIZE && lazer.x <= player.x && lazer.x + lazer.len > player.x) || // right 
                 (lazer.dir === "left" && lazer.y >= player.y && lazer.y < player.y + PLAYER_SIZE && lazer.x >= player.x && lazer.x - lazer.len < player.x ) || // left 
-                (lazer.dir === "down" && lazer.x >= player.x && lazer.x < player.x + PLAYER_SIZE && lazer.y < player.y && lazer.y + lazer.len > player.y + PLAYER_SIZE) || // down
-                (lazer.dir === "up" && lazer.x >= player.x && lazer.x < player.x + PLAYER_SIZE && lazer.y > player.y && lazer.y - lazer.len < player.y + PLAYER_SIZE) // up
+                (lazer.dir === "down" && lazer.x >= player.x && lazer.x < player.x + PLAYER_SIZE && lazer.y <= player.y  && lazer.y + lazer.len > player.y) || // down
+                (lazer.dir === "up"   && lazer.x >= player.x && lazer.x < player.x + PLAYER_SIZE && lazer.y >= player.y  && lazer.y - lazer.len < player.y + PLAYER_SIZE) // up
             ) {
                 return true;
             }
